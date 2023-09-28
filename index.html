@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JEN-1</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.typekit.net/huq8mck.css" />
+    <link href="style.css?v=1.0" rel="stylesheet" />
+    <script src="helper.js?v=1.0" defer></script>
+  </head>
+  <body>
+    <div style="margin-top: 7.5rem;" class="container light-shadow container-responsive bg-white rounded">
+      <div class="text-center">
+        <h2>JEN-1: Text-Guided Universal Music Generation with Omnidirectional Diffusion Models</h2>
+        <p>Futureverse AI Innovation</p>
+      </div>
+      <p>
+        <b>Abstract</b>
+        Music generation has attracted growing interest with the advancement of deep generative models. However,
+        generating music conditioned on textual descriptions, known as text-to-music, remains challenging due to the
+        complexity of musical structures and high sampling rate requirements. Despite the task’s significance,
+        prevailing generative models exhibit limitations in music quality, computational efficiency, and generalization.
+        This paper introduces JEN-1, a universal high-fidelity model for text-to-music generation. JEN-1 is a diffusion
+        model incorporating both autoregressive and non-autoregressive training. Through in-context learning, JEN-1
+        performs various generation tasks including text-guided music generation, music inpainting, and continuation.
+        Evaluations demonstrate JEN-1’s superior performance over state-of-the-art methods in text-music alignment and
+        music quality while maintaining computational efficiency.
+      </p>
+    </div>
+
+    <div class="container light-shadow container-responsive bg-white rounded">
+      <h4>Comparison between music generative models</h4>
+      <p style="color: #4b5563">
+        In the following, we compare the output of JEN-1 to the outputs of other state-of-the-art music generative
+        models (MusicGen, MusicLM, Riffusion and Mousai).
+      </p>
+      <div class="grid-container hide-on-mobile">
+        <div class="grid-item text-center">Prompt</div>
+        <div class="grid-item text-center">JEN-1</div>
+        <div class="grid-item text-center">MusicGen</div>
+        <div class="grid-item text-center">MusicLM</div>
+        <div class="grid-item text-center">Riffusion</div>
+        <div class="grid-item text-center">Mousai</div>
+      </div>
+      <hr class="hide-on-mobile" />
+      <div class="grid-container mt-3">
+        <div class="prompt-grid grid-item">A punchy double-bass and a distorted guitar riff</div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-punchy-double-bass-and-guitar-riff-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-punchy-double-bass-and-guitar-riff-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-punchy-double-bass-and-guitar-riff-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-punchy-double-bass-and-guitar-riff-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-punchy-double-bass-and-guitar-riff-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">Lofi slow bpm electro chill with organic samples</div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/lofi-slow-bpm-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/lofi-slow-bpm-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/lofi-slow-bpm-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/lofi-slow-bpm-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/lofi-slow-bpm-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">Smooth jazz, with a saxophone solo, piano chords, and snare full drums</div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/smooth-jazz-with-saxophone-solo-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/smooth-jazz-with-saxophone-solo-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/smooth-jazz-with-saxophone-solo-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/smooth-jazz-with-saxophone-solo-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/smooth-jazz-with-saxophone-solo-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">
+          A grand orchestral arrangement with thunderous percussion, epic brass fanfares, and soaring strings, creating
+          a cinematic atmosphere fit for a heroic battle
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/grand-orchestral-1.wav" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/grand-orchestral-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/grand-orchestral-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/grand-orchestral-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/grand-orchestral-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">
+          A dynamic blend of hip-hop and orchestral elements, with sweeping strings and brass
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-dynamic-blend-of-hip-hop-and-orchestral-1.wav" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-dynamic-blend-of-hip-hop-and-orchestral-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-dynamic-blend-of-hip-hop-and-orchestral-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-dynamic-blend-of-hip-hop-and-orchestral-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="auto">
+            <source src="audio/samples/a-dynamic-blend-of-hip-hop-and-orchestral-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">
+          Pop dance track with catchy melodies, tropical percussion, and upbeat rhythms, perfect for the beach
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/pop-dance-track-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/pop-dance-track-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/pop-dance-track-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/pop-dance-track-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/pop-dance-track-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">Classic reggae track with an electronic guitar solo</div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/classic-reggae-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/classic-reggae-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/classic-reggae-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/classic-reggae-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/classic-reggae-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">
+          Earthy tones, environmentally conscious, ukulele-infused, harmonic, breezy, easygoing, organic
+          instrumentation, gentle grooves
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/earthy-tones-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/earthy-tones-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/earthy-tones-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/earthy-tones-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/earthy-tones-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">
+          Violins and synths that inspire awe at the finiteness of life and the universe
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/violins-and-synths-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/violins-and-synths-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/violins-and-synths-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/violins-and-synths-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/violins-and-synths-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">
+          80s electronic track with melodic synthesizers, catchy beat and groovy bass
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/80s-electronic-track-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/80s-electronic-track-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/80s-electronic-track-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/80s-electronic-track-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/80s-electronic-track-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">A piano and cello duet playing a sad chambers music</div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-piano-and-cello-duet-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-piano-and-cello-duet-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-piano-and-cello-duet-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-piano-and-cello-duet-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-piano-and-cello-duet-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">
+          A light and cheerly EDM track, with syncopated drums, aery pads, and strong emotions
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-light-and-cheerly-edm-track-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-light-and-cheerly-edm-track-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-light-and-cheerly-edm-track-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-light-and-cheerly-edm-track-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/a-light-and-cheerly-edm-track-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">Acoustic folk song to play during roadtrips: guitar flute choirs</div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/acoustic-folk-song-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/acoustic-folk-song-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/acoustic-folk-song-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/acoustic-folk-song-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/acoustic-folk-song-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+
+      <hr />
+      <div class="grid-container mt-3">
+        <div class="grid-item prompt-grid">
+          Rock with saturated guitars, a heavy bass line and crazy drum break and fills
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name"><b>JEN-1</b></div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/rock-with-saturated-guitars-1.wav" type="audio/wav" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicGen</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/rock-with-saturated-guitars-2.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">MusicLM</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/rock-with-saturated-guitars-3.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Riffusion</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/rock-with-saturated-guitars-4.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+        <div class="grid-item align-center">
+          <div class="show-on-mobile comparison-name">Mousai</div>
+          <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+            <source src="audio/samples/rock-with-saturated-guitars-5.mp3" type="audio/mpeg" />
+          </audio>
+        </div>
+      </div>
+    </div>
+
+    <div class="container light-shadow container-responsive bg-white rounded">
+      <h4>Representation of key musical attributes</h4>
+      <div class="container pt-3">
+        <h5>Genre</h5>
+        <div class="table-responsive">
+          <table class="table pt-2">
+            <thead>
+              <tr>
+                <td style="width: 50%" class="text-center">Prompt</td>
+                <td style="width: 50%" class="ending-text">JEN-1</td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">
+                  Moody, melancholy medium-tempo <b>standard jazz</b> song that is good for late-night listening.
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source src="audio/music-attributes/genre-1.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">
+                  Moody, melancholy medium-tempo <b>fusion jazz</b> song that is good for late-night listening
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source src="audio/music-attributes/genre-2.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">
+                  Moody, melancholy medium-tempo <b>blues</b> that is good for late-night listening.
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source src="audio/music-attributes/genre-3.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+
+      <div class="container pt-6">
+        <h5>Instrument</h5>
+        <div class="table-responsive">
+          <table class="table pt-2">
+            <thead>
+              <tr>
+                <td style="width: 50%" class="text-center">Prompt</td>
+                <td style="width: 50%" class="ending-text">JEN-1</td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">A romantic love song played by a band with a lead <b>piano</b></td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source src="audio/music-attributes/instrument-1.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">A romantic love song played by a band with a lead <b>saxophone</b></td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source src="audio/music-attributes/instrument-2.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+
+      <div class="container pt-6">
+        <h5>Tempo</h5>
+        <div class="table-responsive">
+          <table class="table pt-2">
+            <thead>
+              <tr>
+                <td style="width: 50%" class="text-center">Prompt</td>
+                <td style="width: 50%" class="ending-text">JEN-1</td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">
+                  <b>Slow-paced</b> progressive rock instrumental video game music with electric guitars, keyboards,
+                  bass and drums
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="none">
+                    <source src="audio/music-attributes/tempo-1.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">
+                  <b>Rapidly-paced</b> progressive rock instrumental video game music with electric guitars, keyboards,
+                  bass and drums
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="none">
+                    <source src="audio/music-attributes/tempo-2.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+
+      <div class="container pt-6">
+        <h5>Mood</h5>
+        <div class="table-responsive">
+          <table class="table pt-2">
+            <thead>
+              <tr>
+                <td style="width: 50%" class="text-center">Prompt</td>
+                <td style="width: 50%" class="ending-text">JEN-1</td>
+              </tr>
+              <tr>
+                <td class="cell-prompt"><b>Funky, bright and happy</b> song with smooth, soulful male vocals.</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="none">
+                    <source src="audio/music-attributes/mood-1.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt"><b>Romantic</b> song with smooth, soulful male vocals</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="none">
+                    <source src="audio/music-attributes/mood-2.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+
+      <div class="container pt-6">
+        <h5>Era</h5>
+        <div class="table-responsive">
+          <table class="table pt-2">
+            <thead>
+              <tr>
+                <td style="width: 50%" class="text-center">Prompt</td>
+                <td style="width: 50%" class="ending-text">JEN-1</td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Rock music from the <b>70s</b>, with bass, drum, guitar</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="none">
+                    <source src="audio/music-attributes/era-1.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Rock music from the <b>80s</b>, with bass, drum, guitar</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="none">
+                    <source src="audio/music-attributes/era-2.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Rock music from the <b>90s</b>, with bass, drum, guitar</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="none">
+                    <source src="audio/music-attributes/era-3.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Rock music from the <b>2000s</b>, with bass, drum, guitar</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="none">
+                    <source src="audio/music-attributes/era-4.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="container light-shadow container-responsive bg-white rounded">
+      <h4>Zero-shot ability</h4>
+      <div class="container pt-3">
+        <p style="color: #4b5563">It is possible to generate music based on creative prompts.</p>
+        <div class="table-responsive">
+          <table class="table pt-2">
+            <thead>
+              <tr>
+                <td style="width: 50%" class="text-center">Prompt</td>
+                <td style="width: 50%" class="ending-text">JEN-1</td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">A funky hip hop song played with Scottish bagpipe</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source
+                      src="audio/zero-shot/a-funky-hip-hop-song-played-with-scottish-bagpipe.wav"
+                      type="audio/wav"
+                    />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Acoustic guitars are playing heavy metal riffs</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source
+                      src="audio/zero-shot/acoustic-guitars-are-playing-heavy-metal-riffs.wav"
+                      type="audio/wav"
+                    />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">A flute plays a salsa song</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source src="audio/zero-shot/a-flute-plays-a-salsa-song.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Standard jazz song sung in acapella</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source src="audio/zero-shot/standard-jazz-song-sung-in-acapella.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Cartoon theme song sung by cats</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="wide-audio" preload="auto">
+                    <source src="audio/zero-shot/cartoon-theme-song-sung-by-cats.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="container light-shadow container-responsive bg-white rounded">
+      <h4>Diversity</h4>
+      <div class="container pt-3">
+        <div class="grid-container hide-on-mobile">
+          <div class="grid-item text-center">Prompt</div>
+          <div class="grid-item text-center">Variation 1</div>
+          <div class="grid-item text-center">Variation 2</div>
+          <div class="grid-item text-center">Variation 3</div>
+          <div class="grid-item text-center">Variation 4</div>
+          <div class="grid-item text-center">Variation 5</div>
+        </div>
+        <hr class="hide-on-mobile" />
+        <div class="grid-container mt-3">
+          <div class="prompt-grid grid-item">
+            A dynamic blend of hip-hop and orchestral elements, with sweeping strings and brass, evoking the vibrant
+            energy of the city
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 1</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/a-dynamic-blend-of-hip-hop-1.wav" type="audio/wav" />
+            </audio>
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 2</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/a-dynamic-blend-of-hip-hop-2.wav" type="audio/wav" />
+            </audio>
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 3</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/a-dynamic-blend-of-hip-hop-3.wav" type="audio/wav" />
+            </audio>
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 4</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/a-dynamic-blend-of-hip-hop-4.wav" type="audio/wav" />
+            </audio>
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 5</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/a-dynamic-blend-of-hip-hop-5.wav" type="audio/wav" />
+            </audio>
+          </div>
+        </div>
+
+        <hr />
+        <div class="grid-container mt-3">
+          <div class="grid-item prompt-grid">
+            Smooth jazz, with a saxophone solo, piano chords, and snare full drums
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 1</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/smooth-jazz-with-a-saxophone-1.wav" type="audio/wav" />
+            </audio>
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 2</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/smooth-jazz-with-a-saxophone-2.wav" type="audio/wav" />
+            </audio>
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 3</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/smooth-jazz-with-a-saxophone-3.wav" type="audio/wav" />
+            </audio>
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 4</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/smooth-jazz-with-a-saxophone-4.wav" type="audio/wav" />
+            </audio>
+          </div>
+          <div class="grid-item align-center">
+            <div class="show-on-mobile comparison-name">Variation 5</div>
+            <audio controls controlsList="nodownload" class="fit-parent" preload="none">
+              <source src="audio/diversity/smooth-jazz-with-a-saxophone-5.wav" type="audio/wav" />
+            </audio>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container light-shadow container-responsive bg-white rounded">
+      <h4>Music inpainting (cut and edit)</h4>
+      <p style="color: #4b5563">
+        By masking part of the tracks we can generate music that respects the text prompt, while following the remainder
+        of the track - the following samples have masking applied at 2-5 seconds.
+      </p>
+      <div class="container pt-3">
+        <div class="table-responsive pt-3">
+          <table class="table pt-2" id="melody-conditioning-generation">
+            <thead>
+              <tr class="text-center">
+                <td>Prompt</td>
+                <td>Masked</td>
+                <td>Inpainted</td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Intense, drama, climax, avengers, dark knight, man of steel</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto" >
+                    <source src="audio/music-inpainting/intense-masked.wav" type="audio/wav" />
+                  </audio>
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-inpainting/intense-inpainted.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Motivational, driving, anthemic, uplifting, positive, underscore</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-inpainting/motivational-masked.wav" type="audio/wav" />
+                  </audio>
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-inpainting/motivational-inpainted.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Sad, emotional, dreamy, reflective, ambient, pensive</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-inpainting/sad-masked.wav" type="audio/wav" />
+                  </audio>
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-inpainting/sad-inpainted.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Upbeat, optimistic, joyous, cheerful, light, happy</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-inpainting/upbeat-masked.wav" type="audio/wav" />
+                  </audio>
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-inpainting/upbeat-inpainted.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="container light-shadow container-responsive bg-white rounded">
+      <h4>Music continuation</h4>
+      <p style="color: #4b5563">We can generate coherent music continuations that respect the text prompt - the following samples have masking applied during the second half of the track (5-10 seconds).</p>
+      <div class="container pt-3">
+        <div class="table-responsive pt-3">
+          <table class="table pt-2" id="melody-conditioning-generation">
+            <thead>
+              <tr class="text-center">
+                <td>Prompt</td>
+                <td>Masked</td>
+                <td>Continued</td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Intense, drama, climax, avengers, dark knight, man of steel</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-continuation/intense-masked.wav" type="audio/wav" />
+                  </audio>
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-continuation/intense-continued.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Motivational, driving, anthemic, uplifting, positive, underscore</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-continuation/motivational-masked.wav" type="audio/wav" />
+                  </audio>
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-continuation/motivational-continued.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Sad, emotional, dreamy, reflective, ambient, pensive</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-continuation/sad-masked.wav" type="audio/wav" />
+                  </audio>
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-continuation/sad-continued.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+              <tr>
+                <td class="cell-prompt">Upbeat, optimistic, joyous, cheerful, light, happy</td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-continuation/upbeat-masked.wav" type="audio/wav" />
+                  </audio>
+                </td>
+                <td class="text-center">
+                  <audio controls controlsList="nodownload" class="medium-audio" preload="auto">
+                    <source src="audio/music-continuation/upbeat-continued.wav" type="audio/wav" />
+                  </audio>
+                </td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
